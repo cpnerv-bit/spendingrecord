@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}新增花費紀錄{% endblock %}
+
+{% block content %}
+<h1 class="page-header">
+    <i class="bi bi-plus-circle"></i> 新增花費紀錄
+</h1>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="mb-4">
+                        <label for="date" class="form-label">
+                            <i class="bi bi-calendar-event"></i> 日期
+                        </label>
+                        <input type="date" class="form-control" id="date" name="date" 
+                               required value="{{ today if today else '' }}">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="category" class="form-label">
+                            <i class="bi bi-tags"></i> 類別
+                        </label>
+                        <select class="form-select" id="category" name="category">
+                            <option value="早餐">早餐</option>
+                            <option value="午餐">午餐</option>
+                            <option value="晚餐">晚餐</option>
+                            <option value="custom">自訂類別...</option>
+                        </select>
+                        <div id="customCategoryGroup" class="mt-2" style="display: none;">
+                            <input type="text" class="form-control" id="custom_category" 
+                                   name="custom_category" placeholder="輸入自訂類別">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="item" class="form-label">
+                            <i class="bi bi-basket"></i> 品項
+                        </label>
+                        <input type="text" class="form-control" id="item" name="item" 
+                               required placeholder="請輸入品項名稱">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="price" class="form-label">
+                            <i class="bi bi-cash-coin"></i> 價錢
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text" style="border-radius: 10px 0 0 10px;">NT$</span>
+                            <input type="number" class="form-control" id="price" name="price" 
+                                   required step="0.01" min="0" placeholder="0.00"
+                                   style="border-radius: 0 10px 10px 0;">
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-check-circle"></i> 儲存紀錄
+                        </button>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary btn-lg">
+                            <i class="bi bi-x-circle"></i> 取消
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Set today's date as default
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateInput = document.getElementById('date');
+        if (!dateInput.value) {
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.value = today;
+        }
+        
+        // Custom category toggle
+        const categorySelect = document.getElementById('category');
+        const customCategoryGroup = document.getElementById('customCategoryGroup');
+        const customCategoryInput = document.getElementById('custom_category');
+        
+        categorySelect.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customCategoryGroup.style.display = 'block';
+                customCategoryInput.required = true;
+            } else {
+                customCategoryGroup.style.display = 'none';
+                customCategoryInput.required = false;
+                customCategoryInput.value = '';
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}花費紀錄列表{% endblock %}
+
+{% block content %}
+<h1 class="page-header">
+    <i class="bi bi-wallet2"></i> 我的花費紀錄
+</h1>
+
+<div class="row mb-4">
+    <div class="col-md-8 mx-auto">
+        <div class="total-display">
+            <div>總花費</div>
+            <div style="font-size: 2rem;">NT$ {{ "{:,.0f}".format(total) }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-10 mx-auto text-end">
+        <a href="{{ url_for('new_expense') }}" class="btn btn-success btn-lg">
+            <i class="bi bi-plus-circle"></i> 新增花費紀錄
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-10 mx-auto">
+        {% if expenses %}
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 20%;">日期</th>
+                                    <th style="width: 20%;">類別</th>
+                                    <th style="width: 35%;">品項</th>
+                                    <th style="width: 15%;" class="text-end">價錢</th>
+                                    <th style="width: 10%;" class="text-center">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for expense in expenses %}
+                                <tr class="expense-row" style="cursor: pointer;" 
+                                    onclick="window.location.href='{{ url_for('view_expense', id=expense.id) }}'">
+                                    <td>
+                                        <i class="bi bi-calendar-event"></i>
+                                        {{ expense.date.strftime('%Y-%m-%d') }}
+                                    </td>
+                                    <td>
+                                        <span class="category-badge category-{{ expense.category if expense.category in ['早餐', '午餐', '晚餐'] else 'default' }}">
+                                            {{ expense.category }}
+                                        </span>
+                                    </td>
+                                    <td>{{ expense.item }}</td>
+                                    <td class="text-end" style="font-weight: 600; color: var(--danger-color);">
+                                        NT$ {{ "{:,.0f}".format(expense.price) }}
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="{{ url_for('view_expense', id=expense.id) }}" 
+                                           class="btn btn-sm btn-primary" onclick="event.stopPropagation();">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="card text-center p-5">
+                <div style="font-size: 4rem; color: #d1d5db;">
+                    <i class="bi bi-inbox"></i>
+                </div>
+                <h3 class="mt-3" style="color: #6b7280;">還沒有花費紀錄</h3>
+                <p class="text-muted">點擊上方按鈕開始記錄您的花費</p>
+                <div class="mt-3">
+                    <a href="{{ url_for('new_expense') }}" class="btn btn-success btn-lg">
+                        <i class="bi bi-plus-circle"></i> 新增第一筆紀錄
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .expense-row {
+        transition: all 0.3s ease;
+    }
+    
+    .expense-row:hover {
+        background-color: rgba(99, 102, 241, 0.08) !important;
+        transform: scale(1.01);
+    }
+</style>
+{% endblock %}
