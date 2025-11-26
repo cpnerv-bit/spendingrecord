@@ -2,3 +2,27 @@ Flask==3.0.0
 Flask-SQLAlchemy==3.1.1
 Werkzeug==3.0.1
 gunicorn==21.2.0
+```
+
+#### 步驟 6：部署！
+點擊 "Create Web Service"，等待部署完成。
+
+---
+
+## 📋 回答您的問題
+
+如果您**真的必須**在 Cloudflare Pages 填寫（雖然不會成功）：
+
+### Framework preset:
+```
+None
+```
+
+### Build command:
+```
+pip install -r requirements.txt
+```
+
+### Build output directory:
+```
+留空
