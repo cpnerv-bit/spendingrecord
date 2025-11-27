@@ -12,9 +12,11 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here-ch
 # 如果沒有設定環境變數，則使用本地 SQLite 資料庫
 database_url = os.environ.get('DATABASE_URL')
 if database_url:
-    # Render 的 PostgreSQL URL 以 postgres:// 開頭，但 SQLAlchemy 需要 postgresql://
+    # 將 postgres:// 或 postgresql:// 轉換為 postgresql+psycopg://（使用 psycopg3 驅動）
     if database_url.startswith('postgres://'):
-        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+        database_url = database_url.replace('postgres://', 'postgresql+psycopg://', 1)
+    elif database_url.startswith('postgresql://'):
+        database_url = database_url.replace('postgresql://', 'postgresql+psycopg://', 1)
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///expense_tracker.db'
