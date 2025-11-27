@@ -3,10 +3,22 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from functools import wraps
+import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key-here-change-in-production'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///expense_tracker.db'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here-change-in-production')
+
+# 使用環境變數中的資料庫 URL（Render 會自動設定 DATABASE_URL）
+# 如果沒有設定環境變數，則使用本地 SQLite 資料庫
+database_url = os.environ.get('DATABASE_URL')
+if database_url:
+    # Render 的 PostgreSQL URL 以 postgres:// 開頭，但 SQLAlchemy 需要 postgresql://
+    if database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///expense_tracker.db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
